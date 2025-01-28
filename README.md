@@ -18,10 +18,9 @@ This is a simple web application that allows you to search for a GitHub user's p
 - HTML
 - CSS
 - JavaScript (Fetch API)
-
-
----
-
+  
+<br>
+<br>
 
 # GitHub 리포지토리 검색
 
