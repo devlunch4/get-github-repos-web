@@ -79,7 +79,7 @@
             // Clear previous results
             repoList.innerHTML = '';
             summary.innerHTML = '';
-            copyButton.style.display = 'none'; // Hide the copy button initially
+            copyButton.style.display = 'none';
 
             if (!username) {
                 summary.innerHTML = 'Please enter a GitHub username!';
@@ -104,22 +104,24 @@
                         const repos = await response.json();
 
                         if (repos.length > 0) {
-                            allRepos = allRepos.concat(repos);
-                            page++; // Move to the next page
+                            // Fetch languages for each repository
+                            const reposWithLanguages = await Promise.all(repos.map(async (repo) => {
+                                const langResponse = await fetch(repo.languages_url);
+                                const languages = await langResponse.json();
+                                return {
+                                    ...repo,
+                                    languages: Object.keys(languages)
+                                };
+                            }));
+
+                            allRepos = allRepos.concat(reposWithLanguages);
+                            page++;
                         } else {
-                            hasMore = false; // No more repos to fetch
+                            hasMore = false;  // No more repos to fetch
                         }
                     }
 
                     return allRepos;
-                }
-
-
-                // Function to fetch language data
-                async function fetchRepoLanguages(repo) {
-                    const response = await fetch(repo.languages_url);
-                    const languages = await response.json();
-                    return Object.keys(languages).join(', ') || 'No languages available';
                 }
 
                 // Fetch all repositories
@@ -143,23 +145,21 @@
 
                 // Display repositories as JSON-like format
                 repos.forEach((repo, index) => {
-                    const languages = await fetchRepoLanguages(repo); // Fetch language information
                     const repoInfo = {
                         number: index + 1,
                         type: "Public",
                         title: repo.name,
                         address: repo.html_url,
                         description: repo.description || 'No description available',
-                        created_at: new Date(repo.created_at).toLocaleDateString(),
-                        languages: languages // Include language information
-                        ,
+                        languages: repo.languages || [],
+                        created_at: new Date(repo.created_at).toLocaleDateString()
                     };
 
                     const listItem = document.createElement('li');
                     listItem.setAttribute('data-repo-id', `repo-${index + 1}`);
                     listItem.innerHTML = `
-            <pre>${JSON.stringify(repoInfo, null, 2)}</pre>
-          `;
+                        <pre>${JSON.stringify(repoInfo, null, 2)}</pre>
+                    `;
                     repoList.appendChild(listItem);
                 });
 
