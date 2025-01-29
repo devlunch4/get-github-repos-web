@@ -51,6 +51,7 @@
             background-color: darkgreen;
         }
     </style>
+
 </head>
 
 <body>
@@ -113,6 +114,14 @@
                     return allRepos;
                 }
 
+
+                // Function to fetch language data
+                async function fetchRepoLanguages(repo) {
+                    const response = await fetch(repo.languages_url);
+                    const languages = await response.json();
+                    return Object.keys(languages).join(', ') || 'No languages available';
+                }
+
                 // Fetch all repositories
                 const repos = await fetchAllRepos(username);
 
@@ -134,13 +143,16 @@
 
                 // Display repositories as JSON-like format
                 repos.forEach((repo, index) => {
+                    const languages = await fetchRepoLanguages(repo); // Fetch language information
                     const repoInfo = {
                         number: index + 1,
                         type: "Public",
                         title: repo.name,
                         address: repo.html_url,
                         description: repo.description || 'No description available',
-                        created_at: new Date(repo.created_at).toLocaleDateString()
+                        created_at: new Date(repo.created_at).toLocaleDateString(),
+                        languages: languages // Include language information
+                        ,
                     };
 
                     const listItem = document.createElement('li');
@@ -172,6 +184,7 @@
             }
         });
     </script>
+
 </body>
 
 </html>
