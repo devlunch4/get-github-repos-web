@@ -51,7 +51,6 @@
             background-color: darkgreen;
         }
     </style>
-
 </head>
 
 <body>
@@ -79,7 +78,7 @@
             // Clear previous results
             repoList.innerHTML = '';
             summary.innerHTML = '';
-            copyButton.style.display = 'none';
+            copyButton.style.display = 'none'; // Hide the copy button initially
 
             if (!username) {
                 summary.innerHTML = 'Please enter a GitHub username!';
@@ -104,20 +103,10 @@
                         const repos = await response.json();
 
                         if (repos.length > 0) {
-                            // Fetch languages for each repository
-                            const reposWithLanguages = await Promise.all(repos.map(async (repo) => {
-                                const langResponse = await fetch(repo.languages_url);
-                                const languages = await langResponse.json();
-                                return {
-                                    ...repo,
-                                    languages: Object.keys(languages)
-                                };
-                            }));
-
-                            allRepos = allRepos.concat(reposWithLanguages);
-                            page++;
+                            allRepos = allRepos.concat(repos);
+                            page++; // Move to the next page
                         } else {
-                            hasMore = false;  // No more repos to fetch
+                            hasMore = false; // No more repos to fetch
                         }
                     }
 
@@ -151,15 +140,14 @@
                         title: repo.name,
                         address: repo.html_url,
                         description: repo.description || 'No description available',
-                        languages: repo.languages || [],
                         created_at: new Date(repo.created_at).toLocaleDateString()
                     };
 
                     const listItem = document.createElement('li');
                     listItem.setAttribute('data-repo-id', `repo-${index + 1}`);
                     listItem.innerHTML = `
-                        <pre>${JSON.stringify(repoInfo, null, 2)}</pre>
-                    `;
+            <pre>${JSON.stringify(repoInfo, null, 2)}</pre>
+          `;
                     repoList.appendChild(listItem);
                 });
 
@@ -184,7 +172,6 @@
             }
         });
     </script>
-
 </body>
 
 </html>
