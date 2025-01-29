@@ -50,6 +50,10 @@
         #copyButton:hover {
             background-color: darkgreen;
         }
+
+        #btnClear {
+            background-color: skyblue;
+        }
     </style>
 </head>
 
@@ -58,6 +62,7 @@
     <p>Enter a GitHub username to get the list of repositories:</p>
     <input type="text" id="username" placeholder="Enter GitHub username" />
     <button id="fetchRepos">Fetch Repos</button>
+    <button id="btnClear">Clear</button>
 
     <!-- Area for summary -->
     <div id="summary"></div>
@@ -69,6 +74,18 @@
     <ul id="repoList"></ul>
 
     <script>
+        document.getElementById('btnClear').addEventListener('click', () => {
+            const usernameInput = document.getElementById('username');
+            const repoList = document.getElementById('repoList');
+            const summary = document.getElementById('summary');
+            usernameInput.value = '';
+            repoList.innerHTML = '';
+            summary.innerHTML = 'Clear!';
+
+            const copyButton = document.getElementById('copyButton');
+            copyButton.style.display = 'none'; // Hide the copy button initially
+        });
+
         document.getElementById('fetchRepos').addEventListener('click', async () => {
             const username = document.getElementById('username').value.trim();
             const repoList = document.getElementById('repoList');
@@ -136,11 +153,15 @@
                 repos.forEach((repo, index) => {
                     const repoInfo = {
                         number: index + 1,
-                        type: "Public",
                         title: repo.name,
                         address: repo.html_url,
                         description: repo.description || 'No description available',
-                        created_at: new Date(repo.created_at).toLocaleDateString()
+                        created_at: new Date(repo.created_at).toLocaleDateString(),
+                        updated_at: new Date(repo.updated_at).toLocaleDateString(),
+                        language: repo.language || 'Check the languages_url',
+                        languages_url: repo.languages_url || 'No languages_url specified',
+                        visibility: repo.visibility,
+
                     };
 
                     const listItem = document.createElement('li');
