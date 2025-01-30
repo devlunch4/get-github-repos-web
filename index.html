@@ -190,9 +190,24 @@
                 // Show copy button after data is fetched
                 copyButton.style.display = 'block';
 
+                // // Copy JSON data to clipboard when button is clicked
+                // copyButton.addEventListener('click', () => {
+                //     navigator.clipboard.writeText(jsonData)
+                //         .then(() => {
+                //             alert('JSON data copied to clipboard!');
+                //         })
+                //         .catch((error) => {
+                //             console.error('Error copying to clipboard: ', error);
+                //         });
+                // });
+
                 // Copy JSON data to clipboard when button is clicked
                 copyButton.addEventListener('click', () => {
-                    navigator.clipboard.writeText(jsonData)
+                    // Get only the text content of the repoList (without the <pre> and HTML tags)
+                    const repoText = repoList.innerText || repoList.textContent;
+
+                    // Copy the text content to clipboard
+                    navigator.clipboard.writeText(repoText)
                         .then(() => {
                             alert('JSON data copied to clipboard!');
                         })
