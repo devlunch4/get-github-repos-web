@@ -149,6 +149,12 @@
                 // Prepare JSON data for copying
                 const jsonData = JSON.stringify(repos, null, 2);
 
+
+                // Add opening bracket `[`
+                const openingBracket = document.createElement('li');
+                openingBracket.innerHTML = '<pre>[</pre>';
+                repoList.appendChild(openingBracket);
+
                 // Display repositories as JSON-like format
                 repos.forEach((repo, index) => {
                     const repoInfo = {
@@ -156,8 +162,8 @@
                         title: repo.name,
                         address: repo.html_url,
                         description: repo.description || 'No description available',
-                        created_at: new Date(repo.created_at).toLocaleDateString(),
-                        updated_at: new Date(repo.updated_at).toLocaleDateString(),
+                        created_at: new Date(repo.created_at).toISOString().split('T')[0],
+                        updated_at: new Date(repo.updated_at).toISOString().split('T')[0],
                         language: repo.language || 'Check the languages_url',
                         languages_url: repo.languages_url || 'No languages_url specified',
                         visibility: repo.visibility,
@@ -166,11 +172,20 @@
 
                     const listItem = document.createElement('li');
                     listItem.setAttribute('data-repo-id', `repo-${index + 1}`);
+
+                    // Add a comma `,` only if it's not the last item
                     listItem.innerHTML = `
-            <pre>${JSON.stringify(repoInfo, null, 2)}</pre>
-          `;
+                                        <pre>${JSON.stringify(repoInfo, null, 2)}${index < repos.length - 1 ? ',' : ''}</pre>
+                                        `;
+
                     repoList.appendChild(listItem);
-                });
+                }
+                );
+
+                // Add closing bracket `]`
+                const closingBracket = document.createElement('li');
+                closingBracket.innerHTML = '<pre>]</pre>';
+                repoList.appendChild(closingBracket);
 
                 // Show copy button after data is fetched
                 copyButton.style.display = 'block';
